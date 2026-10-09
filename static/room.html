@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اتاق قرعه | چشم‌ها رو من</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    font-family:Tahoma,Arial,sans-serif;
+    color:white;
+    background:
+        radial-gradient(circle at top,#241b45 0%,#0d0b16 45%,#07070b 100%);
+    padding:24px 16px 50px;
+}
+
+.container{
+    width:100%;
+    max-width:620px;
+    margin:auto;
+}
+
+.brand{
+    text-align:center;
+    margin-bottom:24px;
+}
+
+.eye{
+    font-size:48px;
+    margin-bottom:8px;
+}
+
+h1{
+    margin:0;
+    font-size:24px;
+}
+
+.subtitle{
+    color:#9996aa;
+    margin-top:8px;
+    font-size:13px;
+}
+
+.card{
+    background:rgba(255,255,255,.055);
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:22px;
+    padding:20px;
+    margin-bottom:16px;
+    backdrop-filter:blur(14px);
+}
+
+.label{
+    color:#9996aa;
+    font-size:13px;
+    margin-bottom:8px;
+}
+
+.value{
+    font-size:17px;
+    font-weight:bold;
+    word-break:break-word;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:16px;
+}
+
+.info{
+    background:rgba(0,0,0,.18);
+    border-radius:15px;
+    padding:14px;
+}
+
+.status{
+    text-align:center;
+    padding:15px;
+    border-radius:16px;
+    background:rgba(67,220,145,.08);
+    border:1px solid rgba(67,220,145,.15);
+    color:#71e6a8;
+    font-size:14px;
+    margin-bottom:14px;
+}
+
+.input-row{
+    display:flex;
+    gap:8px;
+    margin-top:14px;
+}
+
+input{
+    flex:1;
+    min-width:0;
+    padding:14px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.1);
+    background:rgba(0,0,0,.25);
+    color:white;
+    outline:none;
+    font-size:15px;
+}
+
+input:focus{
+    border-color:#685cff;
+}
+
+.add-btn{
+    width:52px;
+    border:0;
+    border-radius:14px;
+    background:#685cff;
+    color:white;
+    font-size:22px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.participants{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:12px;
+}
+
+.participant{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    padding:9px 10px;
+    border-radius:12px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.08);
+    font-size:14px;
+}
+
+.remove-btn{
+    border:0;
+    background:transparent;
+    color:#ff7187;
+    cursor:pointer;
+    font-size:15px;
+    padding:2px 4px;
+}
+
+.count{
+    margin-top:12px;
+    color:#888898;
+    font-size:13px;
+}
+
+.start-btn,
+.spin-btn{
+    width:100%;
+    padding:16px;
+    border:0;
+    border-radius:16px;
+    background:linear-gradient(135deg,#685cff,#8b5cf6);
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.start-btn{
+    margin-top:14px;
+}
+
+.spin-btn{
+    margin-top:18px;
+    font-size:17px;
+}
+
+.start-btn:disabled,
+.spin-btn:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+.wheel-card{
+    text-align:center;
+}
+
+.wheel-title{
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:18px;
+}
+
+.wheel-wrap{
+    position:relative;
+    width:min(100%,520px);
+    margin:auto;
+}
+
+#wheel{
+    display:block;
+    width:100%;
+    height:auto;
+    border-radius:50%;
+    filter:drop-shadow(0 15px 35px rgba(0,0,0,.45));
+    transform-origin:center center;
+}
+
+.pointer{
+    position:absolute;
+    z-index:5;
+    top:-8px;
+    left:50%;
+    transform:translateX(-50%);
+    color:#ffffff;
+    font-size:34px;
+    line-height:1;
+    text-shadow:0 3px 12px rgba(0,0,0,.7);
+    pointer-events:none;
+}
+
+.wheel-result{
+    min-height:24px;
+    margin-top:15px;
+    color:#aaa7b8;
+    font-size:14px;
+}
+
+.winner-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:12px 14px;
+    border-radius:14px;
+    background:rgba(113,230,168,.07);
+    border:1px solid rgba(113,230,168,.14);
+}
+
+.winner-name{
+    font-weight:bold;
+    color:#71e6a8;
+}
+
+.winner-time{
+    color:#888898;
+    font-size:12px;
+    direction:ltr;
+}
+
+.back{
+    width:100%;
+    margin-top:8px;
+    padding:14px;
+    border-radius:15px;
+    border:1px solid rgba(255,255,255,.1);
+    background:rgba(255,255,255,.04);
+    color:#aaa7b8;
+    cursor:pointer;
+    font-size:14px;
+}
+
+@media(max-width:480px){
+    .grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="brand">
+        <div class="eye">👁️</div>
+        <h1>چشم‌ها رو من</h1>
+        <div class="subtitle">اتاق قرعه‌کشی</div>
+    </div>
+
+    <section class="card">
+
+        <div class="label">عنوان قرعه‌کشی</div>
+        <div class="value" id="title">---</div>
+
+        <div class="grid">
+
+            <div class="info">
+                <div class="label">🎁 جایزه</div>
+                <div class="value" id="prize">---</div>
+            </div>
+
+            <div class="info">
+                <div class="label">🤝 اسپانسر</div>
+                <div class="value" id="sponsor">---</div>
+            </div>
+
+            <div class="info">
+                <div class="label">🏆 تعداد برندگان</div>
+                <div class="value" id="winnerCount">---</div>
+            </div>
+
+            <div class="info">
+                <div class="label">🔑 شناسه اتاق</div>
+                <div class="value" id="roomId">---</div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="card">
+
+        <div class="label">👥 شرکت‌کننده‌ها</div>
+
+        <div id="participants" class="participants"></div>
+
+        <div class="input-row">
+
+            <input
+                id="nameInput"
+                type="text"
+                placeholder="نام شرکت‌کننده"
+                autocomplete="off"
+            >
+
+            <button
+                id="addBtn"
+                class="add-btn"
+                type="button"
+            >+</button>
+
+        </div>
+
+        <div id="count" class="count">
+            ۰ شرکت‌کننده
+        </div>
+
+    </section>
+
+    <div class="status">
+        🟢 اتاق قرعه آماده است
+    </div>
+
+    <button
+        class="start-btn"
+        id="startBtn"
+        type="button"
+    >
+        🎡 شروع قرعه‌کشی
+    </button>
+
+    <div id="shareBox" style="display:none; margin-top:15px; text-align:center;">
+        <div style="margin-bottom:8px;">🔗 لینک ورود به این اتاق:</div>
+        <input id="shareLink" type="text" readonly style="width:100%; box-sizing:border-box;">
+        <button id="copyShareLink" type="button" style="margin-top:8px;">📋 کپی لینک</button>
+    </div>
+
+    <section class="card wheel-card">
+
+        <div class="wheel-title">
+            🎡 گردونه قرعه‌کشی
+        </div>
+
+        <div class="wheel-wrap">
+
+            <div class="pointer">▼</div>
+
+            <canvas
+                id="wheel"
+                width="520"
+                height="520"
+            ></canvas>
+
+        </div>
+
+        <button
+            class="spin-btn"
+            id="spinBtn"
+            type="button"
+        >
+            🎡 چرخاندن گردونه
+        </button>
+
+        <div id="wheelResult" class="wheel-result">
+            آماده‌ایم...
+        </div>
+
+    </section>
+
+    <section class="card">
+
+        <div class="label">🏆 برندگان</div>
+
+        <div
+            id="winnerList"
+            style="
+                display:flex;
+                flex-direction:column;
+                gap:8px;
+                margin-top:12px;
+            "
+        ></div>
+
+        <div
+            id="winnerProgress"
+            style="
+                margin-top:12px;
+                color:#888898;
+                font-size:13px;
+            "
+        >
+            هنوز برنده‌ای انتخاب نشده
+        </div>
+
+    </section>
+
+    <button
+        class="back"
+        id="backBtn"
+        type="button"
+    >
+        ← برگشت
+    </button>
+
+</div>
+
+<script>
+
+const data = JSON.parse(
+    localStorage.getItem("currentRaffle") || "null"
+);
+
+let liveSocket = null;
+let roomRole = "viewer";
+
+function connectLiveRoom(){
+
+    const params = new URLSearchParams(location.search);
+    const roomId = params.get("room");
+
+    if(!roomId){
+        console.log("⚠️ Room ID وجود ندارد");
+        return;
+    }
+
+    const wsProtocol =
+        location.protocol === "https:" ? "wss" : "ws";
+
+    const wsUrl = location.origin.replace(/^http/, "ws") + "/ws";
+
+    liveSocket = new WebSocket(wsUrl);
+
+    liveSocket.addEventListener("open", () => {
+
+        console.log("👁️ اتصال زنده برقرار شد");
+
+        const isCreate =
+            params.get("create") === "1";
+
+        const savedHostToken =
+            localStorage.getItem(
+                "hostToken_" + roomId
+            );
+
+        if(isCreate){
+
+            liveSocket.send(JSON.stringify({
+                action: "create",
+                room_id: roomId,
+                title: data?.title || "",
+                sponsor: data?.sponsor || "",
+                prize: data?.prize || "",
+                winner_count: Number(data?.winnerCount) || 1
+            }));
+
+        }else{
+
+            liveSocket.send(JSON.stringify({
+                action: "join",
+                room_id: roomId,
+                host_token: savedHostToken || ""
+            }));
+
+        }
+
+    });
+
+    liveSocket.addEventListener("message", (event) => {
+
+        const message = JSON.parse(event.data);
+
+        console.log("📡 Live:", message);
+
+        if(message.type === "state"){
+
+            roomRole = message.role || "viewer";
+
+            if(!data){
+                data = {
+                    title: message.title || "",
+                    sponsor: message.sponsor || "",
+                    prize: message.prize || "",
+                    winnerCount: Number(message.winner_count) || 1,
+                    roomId: message.room_id || ""
+                };
+
+                document.getElementById("title").textContent =
+                    data.title || "---";
+
+                document.getElementById("sponsor").textContent =
+                    data.sponsor || "---";
+
+                document.getElementById("prize").textContent =
+                    data.prize || "---";
+
+                document.getElementById("winnerCount").textContent =
+                    data.winnerCount || "---";
+
+                document.getElementById("roomId").textContent =
+                    data.roomId || "---";
+            }
+
+            if(message.host_token){
+                localStorage.setItem(
+                    "hostToken_" + message.room_id,
+                    message.host_token
+                );
+            }
+
+            if(roomRole === "viewer"){
+                nameInput.style.display = "none";
+                addBtn.style.display = "none";
+                startBtn.style.display = "none";
+                participantsBox.style.display = "none";
+            }
+
+    participants.length = 0;
+    participants.push(...message.participants);
+
+    raffleStarted = message.started;
+
+    winners.length = 0;
+    winnerIndexes.clear();
+
+    message.winners.forEach(w => {
+        winners.push({
+            name: w.name,
+            time: new Date().toLocaleString("fa-IR")
+        });
+        winnerIndexes.add(w.index);
+    });
+
+    nameInput.disabled = raffleStarted;
+    addBtn.disabled = raffleStarted;
+    startBtn.disabled = raffleStarted;
+
+    if(raffleStarted){
+        startBtn.textContent = "🔒 قرعه‌کشی شروع شده است";
+    }
+
+    renderParticipants();
+    renderWinners();
+    drawWheel();
+}
+
+if(message.type === "participants"){
+            participants.length = 0;
+            participants.push(...message.participants);
+            renderParticipants();
+            drawWheel();
+        }
+
+        if(message.type === "start"){
+            raffleStarted = true;
+
+            nameInput.disabled = true;
+            addBtn.disabled = true;
+            startBtn.disabled = true;
+
+            nameInput.style.display = "none";
+            addBtn.style.display = "none";
+
+            startBtn.textContent = "🔒 قرعه‌کشی شروع شده است";
+
+            renderParticipants();
+        }
+
+        if(message.type === "spin"){
+            window.serverExtraTurns =
+                Number(message.extra_turns) || 6;
+
+            animateServerSpin(
+                message.index,
+                message.name
+            );
+            winners.length = 0;
+            winners.push(...message.winners.map(w => ({
+                name: w.name,
+                time: new Date().toLocaleString("fa-IR")
+            })));
+            winnerIndexes.clear();
+            message.winners.forEach(w => winnerIndexes.add(w.index));
+            renderWinners();
+        }
+
+    });
+
+    liveSocket.addEventListener("close", () => {
+
+        console.log("🔌 اتصال زنده قطع شد");
+
+    });
+
+    liveSocket.addEventListener("error", (error) => {
+
+        console.log("❌ خطای WebSocket:", error);
+
+    });
+}
+
+
+connectLiveRoom();
+
+/* اطلاعات قرعه */
+
+if(!data){
+
+    document.getElementById("title").textContent =
+        "در حال اتصال به اتاق...";
+
+    document.getElementById("sponsor").textContent =
+        "---";
+
+    document.getElementById("prize").textContent =
+        "---";
+
+    document.getElementById("winnerCount").textContent =
+        "---";
+
+    document.getElementById("roomId").textContent =
+        new URLSearchParams(location.search).get("room") || "---";
+
+}else{
+
+    document.getElementById("title").textContent =
+        data.title || "---";
+
+    document.getElementById("sponsor").textContent =
+        data.sponsor || "---";
+
+    document.getElementById("prize").textContent =
+        data.prize || "---";
+
+    document.getElementById("winnerCount").textContent =
+        data.winnerCount || "---";
+
+    document.getElementById("roomId").textContent =
+        data.roomId || "---";
+}
+
+
+/* وضعیت قرعه */
+
+const participants = [];
+
+const winners = [];
+
+const winnerIndexes = new Set();
+
+let raffleStarted = false;
+
+let spinning = false;
+
+let wheelRotation = 0;
+
+
+/* عناصر صفحه */
+
+const nameInput =
+    document.getElementById("nameInput");
+
+const addBtn =
+    document.getElementById("addBtn");
+
+const participantsBox =
+    document.getElementById("participants");
+
+const countBox =
+    document.getElementById("count");
+
+const startBtn =
+    document.getElementById("startBtn");
+
+const copyShareLink =
+    document.getElementById("copyShareLink");
+
+if(copyShareLink){
+    copyShareLink.addEventListener("click", () => {
+        const shareLink =
+            document.getElementById("shareLink");
+
+        if(shareLink){
+            shareLink.select();
+            document.execCommand("copy");
+            copyShareLink.textContent = "✅ لینک کپی شد";
+        }
+    });
+}
+
+const wheelCanvas =
+    document.getElementById("wheel");
+
+const wheelCtx =
+    wheelCanvas.getContext("2d");
+
+const spinBtn =
+    document.getElementById("spinBtn");
+
+const wheelResult =
+    document.getElementById("wheelResult");
+
+const winnerList =
+    document.getElementById("winnerList");
+
+const winnerProgress =
+    document.getElementById("winnerProgress");
+
+
+/* نمایش شرکت‌کننده‌ها */
+
+function renderParticipants(){
+
+    participantsBox.innerHTML = "";
+
+    participants.forEach(
+        (name,index) => {
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "participant";
+
+            const nameText =
+                document.createElement("span");
+
+            nameText.textContent =
+                `${index + 1}. ${name}`;
+
+            item.appendChild(nameText);
+
+            if(!raffleStarted){
+
+                const removeBtn =
+                    document.createElement("button");
+
+                removeBtn.type =
+                    "button";
+
+                removeBtn.className =
+                    "remove-btn";
+
+                removeBtn.textContent =
+                    "🗑️";
+
+                removeBtn.addEventListener(
+                    "click",
+                    () => {
+
+                        if(raffleStarted){
+                            return;
+                        }
+
+                        participants.splice(
+                            index,
+                            1
+                        );
+
+                        if(liveSocket && liveSocket.readyState === WebSocket.OPEN){
+                            liveSocket.send(JSON.stringify({
+                                action: "participants",
+                                participants: participants
+                            }));
+                        }
+
+                        drawWheel();
+                        renderParticipants();
+                    }
+                );
+
+                item.appendChild(removeBtn);
+            }
+
+            participantsBox.appendChild(item);
+        }
+    );
+}
+
+/* اضافه کردن شرکت‌کننده */
+
+function addParticipant(){
+
+    if(raffleStarted){
+        return;
+    }
+
+    const normalizedName =
+        nameInput.value
+            .replace(/\s+/g," ")
+            .trim();
+
+    if(!normalizedName){
+        nameInput.focus();
+        return;
+    }
+
+    const duplicate =
+        participants.some(
+            existing =>
+                existing
+                    .replace(/\s+/g," ")
+                    .trim()
+                    === normalizedName
+        );
+
+    if(duplicate){
+        countBox.textContent =
+            "⚠️ این اسم قبلاً وارد شده است";
+
+        countBox.style.color =
+            "#ff7187";
+
+        nameInput.focus();
+        return;
+    }
+
+    participants.push(normalizedName);
+
+    if(liveSocket && liveSocket.readyState === WebSocket.OPEN){
+        liveSocket.send(JSON.stringify({
+            action: "participants",
+            participants: participants
+        }));
+    }
+
+    nameInput.value = "";
+
+    countBox.style.color =
+        "#888898";
+
+    nameInput.focus();
+
+    renderParticipants();
+    drawWheel();
+}
+
+addBtn.addEventListener(
+    "click",
+    addParticipant
+);
+
+
+nameInput.addEventListener(
+    "keydown",
+    event => {
+
+        if(event.key === "Enter"){
+
+            event.preventDefault();
+
+            addParticipant();
+
+        }
+
+    }
+);
+
+
+/* رسم گردونه ثابت */
+
+function drawWheel(){
+
+    const names =
+        participants.length
+            ? participants
+            : ["هنوز شرکت‌کننده‌ای ثبت نشده"];
+
+
+    const cx =
+        wheelCanvas.width / 2;
+
+    const cy =
+        wheelCanvas.height / 2;
+
+    const radius =
+        245;
+
+
+    wheelCtx.clearRect(
+        0,
+        0,
+        wheelCanvas.width,
+        wheelCanvas.height
+    );
+
+
+    const slice =
+        (Math.PI * 2) /
+        names.length;
+
+
+    names.forEach(
+        (name,index) => {
+
+            const start =
+                -Math.PI / 2 +
+                index * slice;
+
+            const end =
+                start + slice;
+
+
+            const isWinner =
+                winnerIndexes.has(index);
+
+
+            wheelCtx.beginPath();
+
+            wheelCtx.moveTo(
+                cx,
+                cy
+            );
+
+            wheelCtx.arc(
+                cx,
+                cy,
+                radius,
+                start,
+                end
+            );
+
+            wheelCtx.closePath();
+
+
+            if(isWinner){
+
+                wheelCtx.fillStyle =
+                    "#17171e";
+
+            }else{
+
+                wheelCtx.fillStyle =
+                    index % 2 === 0
+                        ? "#665cff"
+                        : "#9b6cff";
+
+            }
+
+
+            wheelCtx.fill();
+
+
+            wheelCtx.strokeStyle =
+                "rgba(255,255,255,.18)";
+
+            wheelCtx.lineWidth = 2;
+
+            wheelCtx.stroke();
+
+
+            wheelCtx.save();
+
+
+            wheelCtx.translate(
+                cx +
+                Math.cos(
+                    start + slice / 2
+                ) *
+                radius *
+                .64,
+
+                cy +
+                Math.sin(
+                    start + slice / 2
+                ) *
+                radius *
+                .64
+            );
+
+
+            wheelCtx.rotate(
+                start +
+                slice / 2 +
+                Math.PI / 2
+            );
+
+
+            wheelCtx.fillStyle =
+                isWinner
+                    ? "#62626c"
+                    : "#ffffff";
+
+
+            wheelCtx.font =
+                "bold 18px Tahoma";
+
+            wheelCtx.textAlign =
+                "center";
+
+            wheelCtx.textBaseline =
+                "middle";
+
+
+            let text =
+                name;
+
+
+            if(text.length > 13){
+
+                text =
+                    text.substring(0,13)
+                    + "…";
+
+            }
+
+
+            wheelCtx.fillText(
+                text,
+                0,
+                0
+            );
+
+
+            if(isWinner){
+
+                wheelCtx.font =
+                    "bold 22px Tahoma";
+
+                wheelCtx.fillText(
+                    "✓",
+                    0,
+                    28
+                );
+
+            }
+
+
+            wheelCtx.restore();
+
+        }
+    );
+
+
+    /* مرکز گردونه */
+
+    wheelCtx.beginPath();
+
+    wheelCtx.arc(
+        cx,
+        cy,
+        48,
+        0,
+        Math.PI * 2
+    );
+
+    wheelCtx.fillStyle =
+        "#11101a";
+
+    wheelCtx.fill();
+
+
+    wheelCtx.strokeStyle =
+        "rgba(255,255,255,.25)";
+
+    wheelCtx.lineWidth = 3;
+
+    wheelCtx.stroke();
+
+
+    wheelCtx.fillStyle =
+        "#ffffff";
+
+    wheelCtx.font =
+        "bold 17px Tahoma";
+
+    wheelCtx.textAlign =
+        "center";
+
+    wheelCtx.textBaseline =
+        "middle";
+
+    wheelCtx.fillText(
+        "چشم‌ها",
+        cx,
+        cy - 9
+    );
+
+    wheelCtx.fillText(
+        "رو من",
+        cx,
+        cy + 12
+    );
+
+}
+
+
+/* نمایش برندگان */
+
+function renderWinners(){
+
+    if(document.getElementById("copyWinnersBtn")){
+        document.getElementById("copyWinnersBtn").remove();
+    }
+
+    const copyWinnersBtn =
+        document.createElement("button");
+
+    copyWinnersBtn.id =
+        "copyWinnersBtn";
+
+    copyWinnersBtn.type =
+        "button";
+
+    copyWinnersBtn.textContent =
+        "📋 کپی لیست برندگان";
+
+    copyWinnersBtn.style.cssText =
+        "width:100%; margin:12px 0; padding:12px; border:0; border-radius:10px; cursor:pointer;";
+
+    copyWinnersBtn.addEventListener("click", async () => {
+
+        if(winners.length === 0){
+            return;
+        }
+
+        const text =
+            winners.map((winner,index) =>
+                `${index + 1}. ${winner.name} — ${winner.time}`
+            ).join("\n");
+
+        try{
+            await navigator.clipboard.writeText(text);
+        }catch(e){
+            const temp =
+                document.createElement("textarea");
+
+            temp.value = text;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand("copy");
+            temp.remove();
+        }
+
+        copyWinnersBtn.textContent =
+            "✅ لیست برندگان کپی شد";
+
+        setTimeout(() => {
+            copyWinnersBtn.textContent =
+                "📋 کپی لیست برندگان";
+        }, 2000);
+    });
+
+    winnerList.parentNode.insertBefore(
+        copyWinnersBtn,
+        winnerList
+    );
+
+    winnerList.innerHTML = "";
+
+    winnerList.innerHTML = "";
+
+
+    winners.forEach(
+        (winner,index) => {
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "winner-item";
+
+
+            const name =
+                document.createElement("span");
+
+            name.className =
+                "winner-name";
+
+            name.textContent =
+                `🏆 ${index + 1}. ${winner.name}`;
+
+
+            const time =
+                document.createElement("span");
+
+            time.className =
+                "winner-time";
+
+            time.textContent =
+                winner.time;
+
+
+            item.appendChild(name);
+
+            item.appendChild(time);
+
+            winnerList.appendChild(item);
+
+        }
+    );
+
+
+    const total =
+        Number(
+            data &&
+            data.winnerCount
+        ) || 0;
+
+
+    if(winners.length === 0){
+
+        winnerProgress.textContent =
+            "هنوز برنده‌ای انتخاب نشده";
+
+    }else{
+
+        winnerProgress.textContent =
+            `🏆 ${winners.length.toLocaleString("fa-IR")} برنده از ${total.toLocaleString("fa-IR")}`;
+
+    }
+
+}
+
+
+/* شروع قرعه */
+
+startBtn.addEventListener(
+    "click",
+    () => {
+
+        if(roomRole !== "host") return;
+
+        if(participants.length === 0){
+
+            countBox.textContent =
+                "⚠️ حداقل یک شرکت‌کننده لازم است";
+
+            countBox.style.color =
+                "#ff7187";
+
+            return;
+
+        }
+
+
+        raffleStarted = true;
+
+        nameInput.disabled =
+            true;
+
+        addBtn.disabled =
+            true;
+
+        nameInput.style.opacity =
+            "0.45";
+
+        addBtn.style.opacity =
+            "0.45";
+
+        startBtn.disabled =
+            true;
+
+        startBtn.textContent =
+            "🔒 قرعه‌کشی شروع شده است";
+
+        const shareBox = document.getElementById("shareBox");
+        const shareLink = document.getElementById("shareLink");
+
+        if(shareBox && shareLink){
+            shareLink.value = location.href.split("&create=1")[0];
+            shareBox.style.display = "block";
+        }
+
+
+        renderParticipants();
+
+        wheelResult.textContent =
+            "آماده اولین چرخش هستیم...";
+
+        if(liveSocket && liveSocket.readyState === WebSocket.OPEN){
+            liveSocket.send(JSON.stringify({
+                action: "start"
+            }));
+        }
+
+    }
+);
+
+
+/* چرخاندن گردونه */
+
+function spinWheel(){
+
+    if(roomRole !== "host") return;
+
+    if(!raffleStarted || spinning) return;
+
+    if(liveSocket && liveSocket.readyState === WebSocket.OPEN){
+
+        liveSocket.send(JSON.stringify({
+            action: "spin"
+        }));
+
+    }
+
+}
+
+
+function animateServerSpin(winnerIndex, winnerName){
+
+    if(spinning) return;
+
+    const maxWinners =
+        Number(data && data.winnerCount) || 1;
+
+    if(winners.length >= maxWinners) return;
+
+    spinning = true;
+    spinBtn.disabled = true;
+    wheelResult.textContent = "🎡 گردونه در حال چرخش است...";
+
+    const slice = 360 / participants.length;
+    const winnerCenter = winnerIndex * slice + slice / 2;
+
+    const current =
+        ((wheelRotation % 360) + 360) % 360;
+
+    const needed =
+        (360 - winnerCenter - current + 360) % 360;
+
+    const extraTurns =
+        Number(window.serverExtraTurns) || 6;
+
+    const target =
+        wheelRotation + extraTurns * 360 + needed;
+    const start = wheelRotation;
+    const duration = 4300;
+    const startTime = performance.now();
+
+    function animate(now){
+
+        const progress =
+            Math.min((now - startTime) / duration, 1);
+
+        const eased =
+            1 - Math.pow(1 - progress, 4);
+
+        wheelRotation =
+            start + (target - start) * eased;
+
+        wheelCanvas.style.transform =
+            `rotate(${wheelRotation}deg)`;
+
+        if(progress < 1){
+            requestAnimationFrame(animate);
+            return;
+        }
+
+        wheelRotation = target;
+        winnerIndexes.add(winnerIndex);
+        drawWheel();
+
+        spinning = false;
+
+        const finished =
+            winners.length >= maxWinners;
+
+        spinBtn.disabled = finished;
+        spinBtn.textContent =
+            finished
+            ? "🏆 تمام برندگان انتخاب شدند"
+            : "🎡 چرخاندن گردونه";
+
+        wheelResult.textContent =
+            `🎉 برنده: ${winnerName}`;
+    }
+
+    requestAnimationFrame(animate);
+}
+
+
+spinBtn.addEventListener(
+    "click",
+    spinWheel
+);
+
+
+/* برگشت */
+
+document.getElementById("backBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            window.location.href =
+                "index.html";
+
+        }
+    );
+
+
+/* نمایش اولیه */
+
+renderParticipants();
+
+renderWinners();
+
+drawWheel();
+
+</script>
+
+<script>
+if(window.Telegram && Telegram.WebApp){
+    Telegram.WebApp.ready();
+    Telegram.WebApp.expand();
+}
+</script>
+</body>
+</html>

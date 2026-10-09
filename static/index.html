@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>چشم‌ها رو من</title>
+
+<style>
+input{
+    width:100%;
+    margin-top:12px;
+    padding:15px;
+    border-radius:15px;
+    border:1px solid rgba(255,255,255,.1);
+    outline:none;
+    background:rgba(0,0,0,.25);
+    color:white;
+    font-size:15px;
+    text-align:right;
+}
+input::placeholder{
+    color:#777787;
+}
+
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    margin:0;
+    min-height:100%;
+    background:#07070b;
+    color:#fff;
+    font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    overflow-x:hidden;
+    background:
+        radial-gradient(circle at 50% 15%,rgba(125,80,255,.16),transparent 35%),
+        radial-gradient(circle at 10% 90%,rgba(0,190,255,.08),transparent 30%),
+        #07070b;
+}
+
+.app{
+    width:100%;
+    max-width:520px;
+    min-height:100vh;
+    margin:auto;
+    padding:24px 18px 32px;
+    display:flex;
+    flex-direction:column;
+}
+
+.brand{
+    text-align:center;
+    margin-top:10px;
+}
+
+.logo{
+    width:108px;
+    height:108px;
+    margin:0 auto 18px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:58px;
+    background:
+        radial-gradient(circle at 50% 45%,#ffffff 0 10%,#b7b9ff 11% 18%,#5457ff 19% 30%,#17172b 31% 100%);
+    box-shadow:
+        0 0 35px rgba(105,100,255,.35),
+        inset 0 0 25px rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.12);
+}
+
+.brand h1{
+    margin:0;
+    font-size:30px;
+    letter-spacing:-1px;
+}
+
+.brand p{
+    margin:8px 0 0;
+    color:#a8a8b8;
+    font-size:14px;
+}
+
+.card{
+    margin-top:32px;
+    padding:22px;
+    border-radius:26px;
+    background:rgba(255,255,255,.055);
+    border:1px solid rgba(255,255,255,.09);
+    box-shadow:0 20px 60px rgba(0,0,0,.28);
+    backdrop-filter:blur(18px);
+}
+
+.card-title{
+    font-size:18px;
+    font-weight:700;
+    margin-bottom:8px;
+}
+
+.card-text{
+    color:#aaaaba;
+    font-size:14px;
+    line-height:1.8;
+}
+
+.btn{
+    width:100%;
+    border:0;
+    border-radius:18px;
+    padding:16px;
+    margin-top:20px;
+    color:#fff;
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer;
+    background:linear-gradient(135deg,#685cff,#9b58ff);
+    box-shadow:0 12px 30px rgba(111,82,255,.25);
+}
+
+.btn:active{
+    transform:scale(.98);
+}
+
+.footer{
+    margin-top:auto;
+    padding-top:30px;
+    text-align:center;
+    color:#666675;
+    font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<main class="app">
+
+    <section class="brand">
+        <div class="logo">👁️</div>
+        <h1>چشم‌ها رو من</h1>
+        <p>اینجا چشم‌ها شاهد قرعه‌اند.</p>
+    </section>
+
+    <section class="card">
+        <div class="card-title">🎡 قرعه‌کشی جدید</div>
+
+        <div class="card-text">
+            یک قرعه‌کشی حرفه‌ای بساز،
+            شرکت‌کننده‌ها را مشخص کن،
+            و نتیجه را شفاف و زنده اجرا کن.
+        </div>
+
+        <button class="btn" type="button" onclick="alert('کلیک اجرا شد'); openCreate()">
+            ساخت قرعه‌کشی
+        </button>
+    </section>
+
+    <section class="card" id="createPanel" style="display:none;">
+        <div class="card-title">🎡 ساخت قرعه‌کشی</div>
+
+        <input id="raffleTitle" placeholder="نام قرعه‌کشی">
+        <input id="sponsor" placeholder="نام اسپانسر">
+        <input id="prize" placeholder="جایزه">
+        <input id="winnerCount" type="number" min="1" placeholder="تعداد برنده‌ها">
+
+        <button class="btn" type="button" onclick="createRaffle()">
+            👁️ ساخت و ورود به قرعه
+        </button>
+    </section>
+
+    <div class="footer">
+        👁️ چشم‌ها رو من
+    </div>
+
+</main>
+
+<script>
+function openCreate(){
+    document.getElementById("createPanel").style.display = "block";
+    document.getElementById("createPanel").scrollIntoView({behavior:"smooth"});
+}
+
+function createRaffle(){
+    const title = document.getElementById("raffleTitle").value.trim();
+    const sponsor = document.getElementById("sponsor").value.trim();
+    const prize = document.getElementById("prize").value.trim();
+    const winnerCount = Number(document.getElementById("winnerCount").value);
+
+    if(!title || !sponsor || !prize || !winnerCount){
+        alert("لطفاً همه اطلاعات را کامل وارد کن.");
+        return;
+    }
+
+    const roomId =
+        "CR-" +
+        Math.random().toString(36).substring(2, 7).toUpperCase();
+
+    const raffle = {
+        title,
+        sponsor,
+        prize,
+        winnerCount,
+        roomId
+    };
+
+    localStorage.setItem("currentRaffle", JSON.stringify(raffle));
+
+    location.href =
+        "room.html?room=" +
+        encodeURIComponent(roomId) +
+        "&create=1";
+}
+</script>
+
+<script>
+if(window.Telegram && Telegram.WebApp){
+    Telegram.WebApp.ready();
+    Telegram.WebApp.expand();
+}
+</script>
+</body>
+</html>
