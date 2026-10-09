@@ -193,13 +193,13 @@ async def main():
     static_dir = Path(__file__).parent / "static"
     app.router.add_static("/", static_dir, show_index=True)
 
+    port = int(os.environ.get("PORT", "8080"))
     print("👁️ چشم‌ها رو من | One-Port Live Server")
     print(f"📡 HTTP + WebSocket | Port {port}")
     print("🔒 Host / Viewer System: ON")
 
     runner = web.AppRunner(app)
     await runner.setup()
-    port = int(os.environ.get("PORT", "8080"))
     site = web.TCPSite(runner, "0.0.0.0", port)
     await site.start()
 
